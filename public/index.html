@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Doc Intelligence Field Extractor</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Automatic Field Extraction</h1>
+
+    <section>
+      <h2>1. Define required fields</h2>
+      <p>Enter the field names you expect (comma separated), e.g. InvoiceId, InvoiceTotal, VendorName</p>
+      <input type="text" id="fieldsInput" placeholder="InvoiceId, InvoiceTotal, VendorName" />
+    </section>
+
+    <section>
+      <h2>2. Upload document</h2>
+      <input type="file" id="fileInput" accept="application/pdf" />
+      <button id="submitBtn">Process Document</button>
+    </section>
+
+    <section>
+  <h2>3. Results</h2>
+  <div id="output">Awaiting processing...</div>
+</section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
