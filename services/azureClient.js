@@ -6,6 +6,10 @@ const endpoint = process.env.AZURE_DOC_INTEL_ENDPOINT.replace(/\/$/, '');
 const key = process.env.AZURE_DOC_INTEL_KEY;
 const API_VERSION = '2024-11-30';
 
+// Max time to wait for an analyze operation to finish before giving up.
+const POLL_TIMEOUT_MS = parseInt(process.env.AZURE_POLL_TIMEOUT_MS || '180000', 10); // 3 min default
+const POLL_INTERVAL_MS = parseInt(process.env.AZURE_POLL_INTERVAL_MS || '1500', 10);
+
 const client = DocumentIntelligence(process.env.AZURE_DOC_INTEL_ENDPOINT, new AzureKeyCredential(key), {
   apiVersion: API_VERSION,
 });
@@ -26,8 +30,6 @@ async function classifyDocument(classifierId, base64Source) {
 // Raw fetch-based analyze call, bypassing the SDK so custom preview
 // params like "features" and "queryFields" actually reach Azure.
 async function analyzeWithModel(modelId, base64Source, queryFields = []) {
-    console.log('>>> USING RAW FETCH VERSION, queryFields:', queryFields);
-
   const useQueryFields = queryFields.length > 0;
 
   let url = `${endpoint}/documentintelligence/documentModels/${modelId}:analyze?api-version=${API_VERSION}`;
@@ -58,10 +60,24 @@ async function analyzeWithModel(modelId, base64Source, queryFields = []) {
 }
 
 async function pollAnalyzeResult(operationLocation) {
+  const startTime = Date.now();
+
   while (true) {
+    if (Date.now() - startTime > POLL_TIMEOUT_MS) {
+      throw new Error(
+        `Analyze operation timed out after ${POLL_TIMEOUT_MS}ms waiting on ${operationLocation}`
+      );
+    }
+
     const res = await fetch(operationLocation, {
       headers: { 'Ocp-Apim-Subscription-Key': key },
     });
+
+    if (!res.ok) {
+      const errBody = await res.text();
+      throw new Error(`Polling request failed (${res.status}): ${errBody}`);
+    }
+
     const data = await res.json();
 
     if (data.status === 'succeeded') {
@@ -70,7 +86,8 @@ async function pollAnalyzeResult(operationLocation) {
     if (data.status === 'failed') {
       throw new Error(`Analysis failed: ${JSON.stringify(data)}`);
     }
-    await new Promise((r) => setTimeout(r, 1500));
+
+    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
   }
 }
 

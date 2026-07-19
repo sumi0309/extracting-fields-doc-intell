@@ -12,7 +12,6 @@ function extractSimpleFields(analyzeResult) {
     });
   });
 
-  // Fallback: general document model returns keyValuePairs instead of fields
   const kvPairs = analyzeResult?.keyValuePairs || [];
   kvPairs.forEach((pair) => {
     const key = pair.key?.content;
@@ -25,12 +24,33 @@ function extractSimpleFields(analyzeResult) {
 
 function getFieldContent(fieldValue) {
   if (!fieldValue) return null;
+
+  if (fieldValue.valueArray) {
+    return fieldValue.valueArray.map((item) => getFieldContent(item));
+  }
+
+  // Objects: recurse into each nested field and return a plain object.
+  if (fieldValue.valueObject) {
+    const obj = {};
+    Object.entries(fieldValue.valueObject).forEach(([k, v]) => {
+      obj[k] = getFieldContent(v);
+    });
+    return obj;
+  }
+
   return (
     fieldValue.content ??
     fieldValue.valueString ??
     fieldValue.valueNumber ??
+    fieldValue.valueInteger ??
     fieldValue.valueDate ??
+    fieldValue.valueTime ??
     fieldValue.valuePhoneNumber ??
+    fieldValue.valueSelectionMark ??
+    fieldValue.valueSignature ??
+    fieldValue.valueCountryRegion ??
+    fieldValue.valueBoolean ??
+    (fieldValue.valueCurrency ? fieldValue.valueCurrency.amount : undefined) ??
     null
   );
 }

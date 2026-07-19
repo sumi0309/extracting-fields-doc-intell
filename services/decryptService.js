@@ -2,19 +2,30 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const crypto = require('crypto');
 
 function decryptPdfBuffer(inputBuffer) {
   const tmpDir = os.tmpdir();
-  const inputPath = path.join(tmpDir, `in-${Date.now()}.pdf`);
-  const outputPath = path.join(tmpDir, `out-${Date.now()}.pdf`);
+  const id = crypto.randomUUID();
+  const inputPath = path.join(tmpDir, `in-${id}.pdf`);
+  const outputPath = path.join(tmpDir, `out-${id}.pdf`);
 
-  fs.writeFileSync(inputPath, inputBuffer);
-  execSync(`qpdf --decrypt "${inputPath}" "${outputPath}"`);
-  const decrypted = fs.readFileSync(outputPath);
+  try {
+    fs.writeFileSync(inputPath, inputBuffer);
 
-  fs.unlinkSync(inputPath);
-  fs.unlinkSync(outputPath);
-  return decrypted;
+    try {
+      execSync(`qpdf --decrypt "${inputPath}" "${outputPath}"`, { stdio: 'pipe' });
+    } catch (err) {
+      const stderr = err.stderr ? err.stderr.toString() : err.message;
+      throw new Error(`qpdf failed to process the PDF: ${stderr}`);
+    }
+
+    return fs.readFileSync(outputPath);
+  } finally {
+    // Always clean up temp files, even if qpdf or readFileSync threw.
+    if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+  }
 }
 
 module.exports = { decryptPdfBuffer };
