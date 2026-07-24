@@ -2,19 +2,32 @@ const DocumentIntelligence = require('@azure-rest/ai-document-intelligence').def
 const { getLongRunningPoller, isUnexpected } = require('@azure-rest/ai-document-intelligence');
 const { AzureKeyCredential } = require('@azure/core-auth');
 
-const endpoint = process.env.AZURE_DOC_INTEL_ENDPOINT.replace(/\/$/, '');
-const key = process.env.AZURE_DOC_INTEL_KEY;
 const API_VERSION = '2024-11-30';
 
-// Max time to wait for an analyze operation to finish before giving up.
-const POLL_TIMEOUT_MS = parseInt(process.env.AZURE_POLL_TIMEOUT_MS || '180000', 10); // 3 min default
-const POLL_INTERVAL_MS = parseInt(process.env.AZURE_POLL_INTERVAL_MS || '1500', 10);
+let _client = null;
+function getClient() {
+  if (_client) return _client;
+  const key = process.env.AZURE_DOC_INTEL_KEY;
+  _client = DocumentIntelligence(process.env.AZURE_DOC_INTEL_ENDPOINT, new AzureKeyCredential(key), {
+    apiVersion: API_VERSION,
+  });
+  return _client;
+}
 
-const client = DocumentIntelligence(process.env.AZURE_DOC_INTEL_ENDPOINT, new AzureKeyCredential(key), {
-  apiVersion: API_VERSION,
-});
+function getEndpoint() {
+  const endpoint = process.env.AZURE_DOC_INTEL_ENDPOINT;
+  if (!endpoint) throw new Error('AZURE_DOC_INTEL_ENDPOINT is not set');
+  return endpoint.replace(/\/$/, '');
+}
+
+function getKey() {
+  const key = process.env.AZURE_DOC_INTEL_KEY;
+  if (!key) throw new Error('AZURE_DOC_INTEL_KEY is not set');
+  return key;
+}
 
 async function classifyDocument(classifierId, base64Source) {
+  const client = getClient();
   const initialResponse = await client
     .path('/documentClassifiers/{classifierId}:analyze', classifierId)
     .post({ contentType: 'application/json', body: { base64Source } });
@@ -27,9 +40,9 @@ async function classifyDocument(classifierId, base64Source) {
   return result.body.analyzeResult;
 }
 
-// Raw fetch-based analyze call, bypassing the SDK so custom preview
-// params like "features" and "queryFields" actually reach Azure.
 async function analyzeWithModel(modelId, base64Source, queryFields = []) {
+  const endpoint = getEndpoint();
+  const key = getKey();
   const useQueryFields = queryFields.length > 0;
 
   let url = `${endpoint}/documentintelligence/documentModels/${modelId}:analyze?api-version=${API_VERSION}`;
@@ -56,17 +69,17 @@ async function analyzeWithModel(modelId, base64Source, queryFields = []) {
     throw new Error('No Operation-Location header returned from analyze call.');
   }
 
-  return pollAnalyzeResult(operationLocation);
+  return pollAnalyzeResult(operationLocation, key);
 }
 
-async function pollAnalyzeResult(operationLocation) {
+async function pollAnalyzeResult(operationLocation, key) {
   const startTime = Date.now();
+  const POLL_TIMEOUT_MS = parseInt(process.env.AZURE_POLL_TIMEOUT_MS || '180000', 10);
+  const POLL_INTERVAL_MS = parseInt(process.env.AZURE_POLL_INTERVAL_MS || '1500', 10);
 
   while (true) {
     if (Date.now() - startTime > POLL_TIMEOUT_MS) {
-      throw new Error(
-        `Analyze operation timed out after ${POLL_TIMEOUT_MS}ms waiting on ${operationLocation}`
-      );
+      throw new Error(`Analyze operation timed out after ${POLL_TIMEOUT_MS}ms waiting on ${operationLocation}`);
     }
 
     const res = await fetch(operationLocation, {
@@ -80,15 +93,11 @@ async function pollAnalyzeResult(operationLocation) {
 
     const data = await res.json();
 
-    if (data.status === 'succeeded') {
-      return data.analyzeResult;
-    }
-    if (data.status === 'failed') {
-      throw new Error(`Analysis failed: ${JSON.stringify(data)}`);
-    }
+    if (data.status === 'succeeded') return data.analyzeResult;
+    if (data.status === 'failed') throw new Error(`Analysis failed: ${JSON.stringify(data)}`);
 
     await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
   }
 }
 
-module.exports = { classifyDocument, analyzeWithModel };  
+module.exports = { classifyDocument, analyzeWithModel };

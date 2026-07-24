@@ -1,3 +1,16 @@
+if (!global.WebSocket) {
+  global.WebSocket = require('ws');
+}
+
+const { webcrypto } = require('crypto');
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto;
+}
+
+if (!global.WebSocket) {
+  global.WebSocket = require('ws');
+}
+
 const { app } = require('@azure/functions');
 const { BlobServiceClient } = require('@azure/storage-blob');
 const { createClient } = require('@supabase/supabase-js');
@@ -9,21 +22,32 @@ const { resolveModelFromClassification } = require('../../services/classificatio
 const { extractSimpleFields, allRequiredFieldsFound } = require('../../services/extractionService');
 const { PAGES_PER_BATCH, CLASSIFIER_ID } = require('../../config/modelRouting');
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
-const blobServiceClient = BlobServiceClient.fromConnectionString(
-  process.env.AZURE_STORAGE_CONNECTION_STRING
-);
+let _supabase = null;
+function getSupabase() {
+  if (_supabase) return _supabase;
+  _supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return _supabase;
+}
+
+let _blobServiceClient = null;
+function getBlobServiceClient() {
+  if (_blobServiceClient) return _blobServiceClient;
+  _blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
+  return _blobServiceClient;
+}
 
 app.storageQueue('processUpload', {
   queueName: 'clean-file-jobs',
   connection: 'AzureWebJobsStorage',
   handler: async (queueItem, context) => {
+    const supabase = getSupabase();
+    const blobServiceClient = getBlobServiceClient();
+
     if (queueItem.eventType !== 'Microsoft.Storage.BlobCreated') {
       context.log(`Ignoring event type: ${queueItem.eventType}`);
       return;
     }
 
-    // subject looks like: /blobServices/default/containers/documents-incoming/blobs/<blobname>
     const subject = decodeURIComponent(queueItem.subject);
     const match = subject.match(/containers\/([^/]+)\/blobs\/(.+)/);
     if (!match) {
@@ -42,8 +66,6 @@ app.storageQueue('processUpload', {
       .single();
 
     if (findError || !jobRow) {
-      // Expected for anything uploaded outside your API (e.g. manual portal
-      // uploads during testing) — there's no job record to attach results to.
       context.warn(`No job found for blob_path "${blobPath}". Skipping.`);
       return;
     }
@@ -110,8 +132,6 @@ app.storageQueue('processUpload', {
         })
         .eq('id', jobId);
 
-      // Rethrow so the Functions runtime's built-in retry/poison-queue
-      // behavior applies instead of silently swallowing the failure.
       throw err;
     }
   },
