@@ -52,4 +52,4 @@ jobs:
           app-name: 'doc-intel-api-sumi'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_C330FD2ACE2F42199125B976512FA224 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B0F21256C90F4AEC8A9CED8B8E6C0ED0 }}
