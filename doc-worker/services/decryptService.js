@@ -16,13 +16,24 @@ function decryptPdfBuffer(inputBuffer) {
     try {
       execSync(`qpdf --decrypt "${inputPath}" "${outputPath}"`, { stdio: 'pipe' });
     } catch (err) {
-      const stderr = err.stderr ? err.stderr.toString() : err.message;
-      throw new Error(`qpdf failed to process the PDF: ${stderr}`);
+      // qpdf exit codes: 0 = clean success, 3 = succeeded but with warnings
+      // (e.g. minor structural repairs it made automatically), 2 = real
+      // failure. execSync throws on any non-zero code, so we need to check
+      // whether it was actually just a warning before treating it as fatal.
+      const exitCode = err.status;
+      const outputExists = fs.existsSync(outputPath);
+
+      if (exitCode === 3 && outputExists) {
+        console.warn(`qpdf repaired minor issues in the PDF (exit code 3): ${err.stderr ? err.stderr.toString() : ''}`);
+        // fall through — treat as success, the repaired file is usable
+      } else {
+        const stderr = err.stderr ? err.stderr.toString() : err.message;
+        throw new Error(`qpdf failed to process the PDF: ${stderr}`);
+      }
     }
 
     return fs.readFileSync(outputPath);
   } finally {
-    // Always clean up temp files, even if qpdf or readFileSync threw.
     if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
     if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
   }
