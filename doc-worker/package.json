@@ -1,0 +1,18 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure-rest/ai-document-intelligence": "^1.1.0",
+    "@azure/core-auth": "^1.11.0",
+    "@azure/functions": "^4.0.0",
+    "@azure/storage-blob": "^12.33.0",
+    "@supabase/supabase-js": "^2.110.8",
+    "pdf-lib": "^1.17.1"
+  }
+}
