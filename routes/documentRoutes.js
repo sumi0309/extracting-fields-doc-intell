@@ -11,12 +11,6 @@ const CONTAINER_NAME = 'documents-incoming';
 
 router.post('/process', upload.single('file'), async (req, res) => {
   try {
-    const requiredFieldsRaw = req.body.requiredFields;
-    if (!requiredFieldsRaw) {
-      return res.status(400).json({ error: 'requiredFields is mandatory (array of field names).' });
-    }
-    const requiredFields = JSON.parse(requiredFieldsRaw);
-
     if (!req.file) {
       return res.status(400).json({ error: 'No PDF file uploaded.' });
     }
@@ -24,14 +18,14 @@ router.post('/process', upload.single('file'), async (req, res) => {
     const blobName = `${crypto.randomUUID()}.pdf`;
     const blobPath = `${CONTAINER_NAME}/${blobName}`;
 
-    // Create the job row BEFORE uploading the blob, so it already exists
-    // by the time the blob-created event fires and the worker looks it up.
+    // required_fields starts empty — the worker fills it in once it has
+    // classified the document and looked up which fields apply.
     const { data: jobRow, error: insertError } = await supabase
       .from('jobs')
       .insert({
         status: 'uploaded',
         blob_path: blobPath,
-        required_fields: requiredFields,
+        required_fields: [],
       })
       .select()
       .single();

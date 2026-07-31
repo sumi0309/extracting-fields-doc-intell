@@ -4,23 +4,15 @@ const POLL_INTERVAL_MS = 3000;
 
 document.getElementById('submitBtn').addEventListener('click', async () => {
   const output = document.getElementById('output');
-  const fieldsRaw = document.getElementById('fieldsInput').value.trim();
   const fileInput = document.getElementById('fileInput');
 
-  if (!fieldsRaw) {
-    output.innerHTML = 'Please enter at least one required field.';
-    return;
-  }
   if (!fileInput.files.length) {
     output.innerHTML = 'Please select a PDF file.';
     return;
   }
 
-  const requiredFields = fieldsRaw.split(',').map((f) => f.trim()).filter(Boolean);
-
   const formData = new FormData();
   formData.append('file', fileInput.files[0]);
-  formData.append('requiredFields', JSON.stringify(requiredFields));
 
   output.innerHTML = 'Uploading...';
 
@@ -33,7 +25,7 @@ document.getElementById('submitBtn').addEventListener('click', async () => {
       return;
     }
 
-    output.innerHTML = `Uploaded. Job ID: ${escapeHtml(data.jobId)}<br/>Waiting for the scan and processing to finish...`;
+    output.innerHTML = `Uploaded. Job ID: ${escapeHtml(data.jobId)}<br/>Waiting for the scan and processing to start...`;
     pollStatus(data.jobId);
   } catch (err) {
     output.innerHTML = `<span class="error">Upload failed: ${escapeHtml(err.message)}</span>`;
@@ -61,14 +53,31 @@ function pollStatus(jobId) {
         clearInterval(intervalId);
         output.innerHTML = `<span class="error">Processing failed: ${escapeHtml(job.error || 'unknown error')}</span>`;
       } else {
-        // uploaded | processing — keep waiting
-        output.innerHTML = `Status: ${escapeHtml(job.status)}... (Job ID: ${escapeHtml(jobId)})`;
+        renderInProgress(job, jobId);
       }
     } catch (err) {
       clearInterval(intervalId);
       output.innerHTML = `<span class="error">Status check failed: ${escapeHtml(err.message)}</span>`;
     }
   }, POLL_INTERVAL_MS);
+}
+
+function renderInProgress(job, jobId) {
+  const output = document.getElementById('output');
+  const requiredFields = job.required_fields || [];
+
+  // Once the worker has classified the document, required_fields gets
+  // populated even before extraction finishes — show that as soon as it's there.
+  if (requiredFields.length > 0) {
+    output.innerHTML = `
+      <p>Status: ${escapeHtml(job.status)}...</p>
+      <p>Detected type: <strong>${escapeHtml(job.doc_type || 'unknown')}</strong> (model: ${escapeHtml(job.model_used || '-')})</p>
+      <p>Extracting these fields:</p>
+      <ul>${requiredFields.map((f) => `<li>${escapeHtml(f)}</li>`).join('')}</ul>
+    `;
+  } else {
+    output.innerHTML = `Status: ${escapeHtml(job.status)}... (detecting document type — Job ID: ${escapeHtml(jobId)})`;
+  }
 }
 
 function renderResults(job) {
@@ -107,7 +116,7 @@ function renderResults(job) {
       </div>
     </div>
 
-    <h3>Required Fields Status</h3>
+    <h3>Extracted Fields</h3>
     <table class="fields-table">
       <thead>
         <tr><th>Field</th><th>Value Found</th><th>Status</th></tr>
