@@ -1,4 +1,4 @@
-const BACKEND_BASE = 'https://doc-intel-api-sumi-c5f3amf6bubedudf.southcentralus-01.azurewebsites.net/api/documents';
+const BACKEND_BASE = '/api/documents';
 
 const POLL_INTERVAL_MS = 3000;
 
