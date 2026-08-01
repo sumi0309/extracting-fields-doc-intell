@@ -1,2 +1,5 @@
 node_modules/
 .env
+api-settings-backup.json
+worker-settings-backup.json
+AZURE_MIGRATION.md

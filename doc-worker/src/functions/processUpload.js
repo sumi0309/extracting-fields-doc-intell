@@ -7,20 +7,17 @@ if (!globalThis.crypto) {
   globalThis.crypto = webcrypto;
 }
 
-if (!global.WebSocket) {
-  global.WebSocket = require('ws');
-}
-
 const { app } = require('@azure/functions');
 const { BlobServiceClient } = require('@azure/storage-blob');
 const { createClient } = require('@supabase/supabase-js');
 
 const { decryptPdfBuffer } = require('../../services/decryptService');
 const { splitPdfIntoBatches } = require('../../services/pdfService');
-const { classifyDocument, analyzeWithModel } = require('../../services/azureClient');
-const { resolveModelFromClassification } = require('../../services/classificationService');
+const { analyzeWithModel } = require('../../services/azureClient');
+const { classifyWithGemini } = require('../../services/geminiClassifier');
+const { getModelFields } = require('../../services/modelLookupService');
 const { extractSimpleFields, allRequiredFieldsFound } = require('../../services/extractionService');
-const { PAGES_PER_BATCH, CLASSIFIER_ID } = require('../../config/modelRouting');
+const { PAGES_PER_BATCH } = require('../../config/modelRouting');
 
 let _supabase = null;
 function getSupabase() {
@@ -82,28 +79,47 @@ app.storageQueue('processUpload', {
       const cleanBuffer = decryptPdfBuffer(downloadBuffer);
       const { batches, totalPages } = await splitPdfIntoBatches(cleanBuffer, PAGES_PER_BATCH);
 
-      const requiredFields = jobRow.required_fields;
+      if (batches.length === 0) {
+        throw new Error('PDF produced no pages to process.');
+      }
+
+      // --- Classify once, using the first batch, then reuse for the whole document ---
+      const firstBatchBase64 = batches[0].buffer.toString('base64');
+      const { modelId, docType: classifierDocType } = await classifyWithGemini(supabase, firstBatchBase64);
+      context.log(`Gemini classified document as "${classifierDocType}" -> model "${modelId}"`);
+
+      const { docType, queryFields } = await getModelFields(supabase, modelId);
+      const resolvedDocType = docType || classifierDocType;
+
+      context.log(`Extracting fields for "${resolvedDocType}": ${JSON.stringify(queryFields)}`);
+
+      // Update the job now, before extraction finishes, so the UI can show
+      // "here's what we're pulling out of this document" while it works.
+      await supabase
+        .from('jobs')
+        .update({
+          doc_type: resolvedDocType,
+          model_used: modelId,
+          required_fields: queryFields,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', jobId);
+
+      // --- Extraction loop, same shape as before, just DB-sourced fields ---
       let extractedFields = {};
-      let docType = null;
-      let modelUsed = null;
       let pagesProcessed = 0;
 
       for (const batch of batches) {
         const base64Source = batch.buffer.toString('base64');
-
-        const classifyResult = await classifyDocument(CLASSIFIER_ID, base64Source);
-        const { modelId, docType: detectedType } = resolveModelFromClassification(classifyResult);
-        const analyzeResult = await analyzeWithModel(modelId, base64Source, requiredFields);
+        const analyzeResult = await analyzeWithModel(modelId, base64Source, queryFields);
         const batchFields = extractSimpleFields(analyzeResult);
 
         extractedFields = { ...extractedFields, ...batchFields };
-        docType = detectedType;
-        modelUsed = modelId;
         pagesProcessed = batch.endPage;
 
         context.log(`Processed pages ${batch.startPage}-${batch.endPage} | model=${modelId}`);
 
-        if (allRequiredFieldsFound(extractedFields, requiredFields)) break;
+        if (allRequiredFieldsFound(extractedFields, queryFields)) break;
       }
 
       await supabase
@@ -111,8 +127,6 @@ app.storageQueue('processUpload', {
         .update({
           status: 'done',
           extracted_fields: extractedFields,
-          doc_type: docType,
-          model_used: modelUsed,
           total_pages: totalPages,
           pages_processed: pagesProcessed,
           updated_at: new Date().toISOString(),
