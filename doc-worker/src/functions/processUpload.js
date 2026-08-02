@@ -104,7 +104,7 @@ app.storageQueue('processUpload', {
           updated_at: new Date().toISOString(),
         })
         .eq('id', jobId);
-
+        
       // --- Extraction loop, same shape as before, just DB-sourced fields ---
       let extractedFields = {};
       let pagesProcessed = 0;

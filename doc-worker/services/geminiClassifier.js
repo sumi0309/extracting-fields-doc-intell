@@ -4,7 +4,7 @@
 // add a new row there and Gemini will start considering it automatically,
 // no code change needed.
 
-const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
 
 // Short descriptions to help Gemini distinguish visually/structurally similar
 // document types. Keyed by the doc_type string stored in Supabase — must
