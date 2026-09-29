@@ -1,7 +1,7 @@
 {
 	"status": "succeeded",
-	"createdDateTime": "2026-09-08T05:43:38Z",
-	"lastUpdatedDateTime": "2026-09-08T05:43:40Z",
+	"createdDateTime": "2026-09-29T22:39:24Z",
+	"lastUpdatedDateTime": "2026-09-29T22:39:32Z",
 	"analyzeResult": {
 		"apiVersion": "2024-11-30",
 		"modelId": "prebuilt-layout",
@@ -6731,6 +6731,37 @@
 					}
 				],
 				"fields": {
+					"Footer": {
+						"type": "string",
+						"confidence": 0
+					},
+					"Language": {
+						"type": "string",
+						"valueString": "Latin",
+						"content": "Latin",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.9887,
+									3.1198,
+									1.3476,
+									3.12,
+									1.3478,
+									3.2965,
+									0.989,
+									3.2961
+								]
+							}
+						],
+						"confidence": 0.916,
+						"spans": [
+							{
+								"offset": 58,
+								"length": 5
+							}
+						]
+					},
 					"PageNumber": {
 						"type": "string",
 						"valueString": "1 | Page",
@@ -6750,7 +6781,7 @@
 								]
 							}
 						],
-						"confidence": 0.806,
+						"confidence": 0.716,
 						"spans": [
 							{
 								"offset": 1333,
