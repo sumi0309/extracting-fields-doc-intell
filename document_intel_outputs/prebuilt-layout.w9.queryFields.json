@@ -1,7 +1,7 @@
 {
 	"status": "succeeded",
-	"createdDateTime": "2026-10-01T01:33:36Z",
-	"lastUpdatedDateTime": "2026-10-01T01:33:41Z",
+	"createdDateTime": "2026-10-01T21:22:20Z",
+	"lastUpdatedDateTime": "2026-10-01T21:22:24Z",
 	"analyzeResult": {
 		"apiVersion": "2024-11-30",
 		"modelId": "prebuilt-layout",
@@ -21695,88 +21695,38 @@
 					}
 				],
 				"fields": {
-					"Address": {
+					"NameOfEntity": {
 						"type": "string",
-						"valueString": "12/1 Samajwadi Indra Nagar",
-						"content": "12/1 Samajwadi Indra Nagar",
+						"valueString": "Sumiran Jaiswal Jaiswal Incense Sticks",
+						"content": "Sumiran Jaiswal\nJaiswal Incense Sticks",
 						"boundingRegions": [
 							{
 								"pageNumber": 1,
 								"polygon": [
-									0.8587,
-									3.9647,
-									2.868,
-									3.972,
-									2.8674,
-									4.1443,
-									0.8581,
-									4.137
-								]
-							}
-						],
-						"confidence": 0.832,
-						"spans": [
-							{
-								"offset": 2138,
-								"length": 26
-							}
-						]
-					},
-					"BusinessName": {
-						"type": "string",
-						"valueString": "Jaiswal Incense Sticks",
-						"content": "Jaiswal Incense Sticks",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									0.8314,
-									1.9868,
+									0.8313,
+									1.5971,
+									2.3645,
+									1.5968,
 									2.3646,
-									1.9845,
-									2.3648,
-									2.1474,
-									0.8316,
+									2.1494,
+									0.8314,
 									2.1497
 								]
 							}
 						],
-						"confidence": 0.976,
+						"confidence": 0.536,
 						"spans": [
+							{
+								"offset": 549,
+								"length": 15
+							},
 							{
 								"offset": 683,
 								"length": 22
 							}
 						]
 					},
-					"BusinessTaxClassification": {
-						"type": "string",
-						"valueString": "P",
-						"content": "P",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									5.8099,
-									2.6721,
-									5.906,
-									2.6721,
-									5.906,
-									2.8018,
-									5.8091,
-									2.8017
-								]
-							}
-						],
-						"confidence": 0.328,
-						"spans": [
-							{
-								"offset": 1115,
-								"length": 1
-							}
-						]
-					},
-					"City": {
+					"PermanentAddressCity": {
 						"type": "string",
 						"valueString": "Indore",
 						"content": "Indore",
@@ -21795,7 +21745,7 @@
 								]
 							}
 						],
-						"confidence": 0.95,
+						"confidence": 0.44,
 						"spans": [
 							{
 								"offset": 2270,
@@ -21803,138 +21753,88 @@
 							}
 						]
 					},
-					"Date": {
+					"PermanentAddressCountry": {
 						"type": "string",
-						"valueString": "09-30-2026",
-						"content": "09-30-2026",
+						"confidence": 0
+					},
+					"PermanentAddressState": {
+						"type": "string",
+						"valueString": "Madhya Pradesh",
+						"content": "Madhya Pradesh",
 						"boundingRegions": [
 							{
 								"pageNumber": 1,
 								"polygon": [
-									5.7045,
-									8.0872,
-									6.5132,
-									8.0876,
-									6.5132,
-									8.2341,
-									5.7051,
-									8.2341
+									2.1289,
+									4.3119,
+									3.3193,
+									4.3121,
+									3.3193,
+									4.4819,
+									2.1289,
+									4.4817
 								]
 							}
 						],
-						"confidence": 0.879,
+						"confidence": 0.446,
 						"spans": [
 							{
-								"offset": 4475,
-								"length": 10
+								"offset": 2277,
+								"length": 14
 							}
 						]
 					},
-					"EmployerIdentificationNumber": {
+					"PermanentAddressZipcode": {
 						"type": "string",
-						"valueString": "–",
-						"content": "–",
+						"valueString": "452009",
+						"content": "452009",
 						"boundingRegions": [
 							{
 								"pageNumber": 1,
 								"polygon": [
-									6.2722,
-									5.9871,
-									6.3278,
-									5.9871,
-									6.3278,
-									6.0007,
-									6.2722,
-									6.0007
+									3.423,
+									4.3123,
+									3.9502,
+									4.3124,
+									3.9502,
+									4.4755,
+									3.4229,
+									4.4771
 								]
 							}
 						],
-						"confidence": 0.367,
+						"confidence": 0.455,
 						"spans": [
 							{
-								"offset": 3077,
-								"length": 1
+								"offset": 2292,
+								"length": 6
 							}
 						]
 					},
-					"EntityName": {
+					"PersonName": {
 						"type": "string",
-						"valueString": "Sumiran Jaiswal",
-						"content": "Sumiran Jaiswal",
+						"valueString": "John Doe",
+						"content": "John Doe",
 						"boundingRegions": [
 							{
 								"pageNumber": 1,
 								"polygon": [
-									0.846,
-									1.5959,
-									1.973,
-									1.6,
-									1.9724,
-									1.7643,
-									0.8454,
-									1.7602
+									5.4578,
+									3.9892,
+									6.7684,
+									3.9936,
+									6.7678,
+									4.1489,
+									5.4573,
+									4.1445
 								]
 							}
 						],
-						"confidence": 0.956,
+						"confidence": 0.414,
 						"spans": [
 							{
-								"offset": 549,
-								"length": 15
-							}
-						]
-					},
-					"ExemptPayeeCode": {
-						"type": "string",
-						"valueString": "ABC12",
-						"content": "ABC12",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									7.5682,
-									2.6846,
-									7.9171,
-									2.6834,
-									7.9171,
-									2.8039,
-									7.5681,
-									2.8023
-								]
-							}
-						],
-						"confidence": 0.995,
-						"spans": [
-							{
-								"offset": 1913,
-								"length": 5
-							}
-						]
-					},
-					"FATCACode": {
-						"type": "string",
-						"valueString": "SUMI321",
-						"content": "SUMI321",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									6.9603,
-									3.1734,
-									7.58,
-									3.1771,
-									7.58,
-									3.3137,
-									6.96,
-									3.3073
-								]
-							}
-						],
-						"confidence": 0.618,
-						"spans": [
-							{
-								"offset": 2001,
-								"length": 7
+								"offset": 2205,
+								"length": 8
 							}
 						]
 					},
@@ -21957,7 +21857,7 @@
 								]
 							}
 						],
-						"confidence": 0.802,
+						"confidence": 0.841,
 						"spans": [
 							{
 								"offset": 2214,
@@ -21969,111 +21869,30 @@
 							}
 						]
 					},
-					"RequesterName": {
+					"StreetAddress": {
 						"type": "string",
-						"valueString": "John Doe",
-						"content": "John Doe",
+						"valueString": "12/1 Samajwadi Indra Nagar",
+						"content": "12/1 Samajwadi Indra Nagar",
 						"boundingRegions": [
 							{
 								"pageNumber": 1,
 								"polygon": [
-									5.4578,
-									3.9892,
-									6.7684,
-									3.9936,
-									6.7678,
-									4.1489,
-									5.4573,
-									4.1445
+									0.8587,
+									3.9647,
+									2.868,
+									3.972,
+									2.8674,
+									4.1443,
+									0.8581,
+									4.137
 								]
 							}
 						],
-						"confidence": 0.895,
+						"confidence": 0.641,
 						"spans": [
 							{
-								"offset": 2205,
-								"length": 8
-							}
-						]
-					},
-					"SocialSecurityNumber": {
-						"type": "string",
-						"valueString": "113-93-7593",
-						"content": "113-93-7593",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									5.7951,
-									5.1539,
-									7.9889,
-									5.1481,
-									7.9889,
-									5.482,
-									5.7956,
-									5.4751
-								]
-							}
-						],
-						"confidence": 0.984,
-						"spans": [
-							{
-								"offset": 3031,
-								"length": 11
-							}
-						]
-					},
-					"State": {
-						"type": "string",
-						"valueString": "Madhya Pradesh",
-						"content": "Madhya Pradesh",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									2.1289,
-									4.3119,
-									3.3193,
-									4.3121,
-									3.3193,
-									4.4819,
-									2.1289,
-									4.4817
-								]
-							}
-						],
-						"confidence": 0.92,
-						"spans": [
-							{
-								"offset": 2277,
-								"length": 14
-							}
-						]
-					},
-					"Zipcode": {
-						"type": "string",
-						"valueString": "452009",
-						"content": "452009",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									3.423,
-									4.3123,
-									3.9502,
-									4.3124,
-									3.9502,
-									4.4755,
-									3.4229,
-									4.4771
-								]
-							}
-						],
-						"confidence": 0.949,
-						"spans": [
-							{
-								"offset": 2292,
-								"length": 6
+								"offset": 2138,
+								"length": 26
 							}
 						]
 					}

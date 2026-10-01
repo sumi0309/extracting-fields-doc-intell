@@ -1,7 +1,7 @@
 {
 	"status": "succeeded",
-	"createdDateTime": "2026-10-01T02:28:11Z",
-	"lastUpdatedDateTime": "2026-10-01T02:28:15Z",
+	"createdDateTime": "2026-10-01T21:25:56Z",
+	"lastUpdatedDateTime": "2026-10-01T21:26:00Z",
 	"analyzeResult": {
 		"apiVersion": "2024-11-30",
 		"modelId": "prebuilt-layout",
@@ -16467,200 +16467,7 @@
 					}
 				],
 				"fields": {
-					"CountryOfIncorporation": {
-						"type": "string",
-						"valueString": "India",
-						"content": "India",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									5.2368,
-									3.1613,
-									5.5947,
-									3.163,
-									5.5947,
-									3.3161,
-									5.2364,
-									3.3161
-								]
-							}
-						],
-						"confidence": 0.995,
-						"spans": [
-							{
-								"offset": 1653,
-								"length": 5
-							}
-						]
-					},
-					"ForeignTaxPayerIdentificationNumber": {
-						"type": "string",
-						"confidence": 0
-					},
-					"MailingAddress": {
-						"type": "string",
-						"valueString": "13875 Chestnut Dr",
-						"content": "13875 Chestnut Dr",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									0.5311,
-									9.1599,
-									1.8652,
-									9.1629,
-									1.8649,
-									9.3201,
-									0.5307,
-									9.3171
-								]
-							}
-						],
-						"confidence": 0.987,
-						"spans": [
-							{
-								"offset": 5041,
-								"length": 17
-							}
-						]
-					},
-					"MailingAddressCity": {
-						"type": "string",
-						"valueString": "Eden Prairie,",
-						"content": "Eden Prairie,",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									0.5219,
-									9.4913,
-									1.4116,
-									9.492,
-									1.4115,
-									9.6573,
-									0.5218,
-									9.6566
-								]
-							}
-						],
-						"confidence": 0.834,
-						"spans": [
-							{
-								"offset": 5131,
-								"length": 13
-							}
-						]
-					},
-					"MailingAddressCountry": {
-						"type": "string",
-						"valueString": "China",
-						"content": "China",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									6.1225,
-									9.5008,
-									6.541,
-									9.5046,
-									6.541,
-									9.6426,
-									6.1221,
-									9.6411
-								]
-							}
-						],
-						"confidence": 0.995,
-						"spans": [
-							{
-								"offset": 5176,
-								"length": 5
-							}
-						]
-					},
-					"MailingAddressState": {
-						"type": "string",
-						"valueString": "Madhya Pradesh,",
-						"content": "Madhya Pradesh,",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									1.4436,
-									9.4915,
-									2.7191,
-									9.4925,
-									2.719,
-									9.6586,
-									1.4435,
-									9.6576
-								]
-							}
-						],
-						"confidence": 0.969,
-						"spans": [
-							{
-								"offset": 5145,
-								"length": 15
-							}
-						]
-					},
-					"MailingAddressZipcode": {
-						"type": "string",
-						"valueString": "200122",
-						"content": "200122",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									2.7513,
-									9.4929,
-									3.265,
-									9.4921,
-									3.265,
-									9.653,
-									2.7511,
-									9.6558
-								]
-							}
-						],
-						"confidence": 0.983,
-						"spans": [
-							{
-								"offset": 5161,
-								"length": 6
-							}
-						]
-					},
-					"NameOfDisregardedEntity": {
-						"type": "string",
-						"valueString": "Sumiran Jaiswal",
-						"content": "Sumiran Jaiswal",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									0.5169,
-									3.4885,
-									1.6488,
-									3.4928,
-									1.6481,
-									3.6645,
-									0.5162,
-									3.6602
-								]
-							}
-						],
-						"confidence": 0.972,
-						"spans": [
-							{
-								"offset": 1744,
-								"length": 15
-							}
-						]
-					},
-					"NameOfOrganization": {
+					"NameOfEntity": {
 						"type": "string",
 						"valueString": "Aashi Incense Sticks",
 						"content": "Aashi Incense Sticks",
@@ -16679,38 +16486,11 @@
 								]
 							}
 						],
-						"confidence": 0.982,
+						"confidence": 0.842,
 						"spans": [
 							{
 								"offset": 1589,
 								"length": 20
-							}
-						]
-					},
-					"PermanentAddress": {
-						"type": "string",
-						"valueString": "3424 Tulane Dr.",
-						"content": "3424 Tulane Dr.",
-						"boundingRegions": [
-							{
-								"pageNumber": 1,
-								"polygon": [
-									0.5152,
-									8.4945,
-									1.6496,
-									8.498,
-									1.6491,
-									8.6571,
-									0.5147,
-									8.6536
-								]
-							}
-						],
-						"confidence": 0.99,
-						"spans": [
-							{
-								"offset": 4865,
-								"length": 15
 							}
 						]
 					},
@@ -16733,7 +16513,7 @@
 								]
 							}
 						],
-						"confidence": 0.995,
+						"confidence": 0.967,
 						"spans": [
 							{
 								"offset": 4953,
@@ -16787,7 +16567,7 @@
 								]
 							}
 						],
-						"confidence": 0.988,
+						"confidence": 0.909,
 						"spans": [
 							{
 								"offset": 4966,
@@ -16814,7 +16594,7 @@
 								]
 							}
 						],
-						"confidence": 0.974,
+						"confidence": 0.614,
 						"spans": [
 							{
 								"offset": 4976,
@@ -16822,9 +16602,40 @@
 							}
 						]
 					},
-					"USTaxPayerIdentificationNumber": {
+					"PersonName": {
 						"type": "string",
 						"confidence": 0
+					},
+					"RequesterAddress": {
+						"type": "string",
+						"confidence": 0
+					},
+					"StreetAddress": {
+						"type": "string",
+						"valueString": "3424 Tulane Dr.",
+						"content": "3424 Tulane Dr.",
+						"boundingRegions": [
+							{
+								"pageNumber": 1,
+								"polygon": [
+									0.5152,
+									8.4945,
+									1.6496,
+									8.498,
+									1.6491,
+									8.6571,
+									0.5147,
+									8.6536
+								]
+							}
+						],
+						"confidence": 0.394,
+						"spans": [
+							{
+								"offset": 4865,
+								"length": 15
+							}
+						]
 					}
 				},
 				"confidence": 1,
